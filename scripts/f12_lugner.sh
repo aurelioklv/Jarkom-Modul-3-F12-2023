@@ -31,7 +31,7 @@ fi
 # Install requirements using apt-get
 echo -e "${BG_BLUE}Installing requirements...${RESET}"
 apt-get update
-apt-get install -y wget unzip php nginx
+apt-get install -y wget unzip nginx php php-fpm
 
 if [ $? -eq 0 ]; then
   echo -e "${BG_GREEN}Requirements installed successfully.${RESET}"
@@ -69,7 +69,7 @@ location / {
 # pass PHP scripts to FastCGI server
 location ~ \.php$ {
         include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+        fastcgi_pass unix:/run/php/php7.3-fpm.sock;
 }
 
 location ~ /\.ht {
@@ -89,7 +89,7 @@ fi
 
 # Restarting services
 echo -e "${BG_CYAN}Restarting services ...${RESET}"
-service php7.0-fpm start
+service php7.3-fpm start
 service nginx restart
 
 echo -e "${BG_MAGENTA}DONE${RESET}"
