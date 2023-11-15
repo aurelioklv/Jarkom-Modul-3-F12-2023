@@ -91,7 +91,7 @@ $TTL    604800
                         604800 )      ; Negative Cache TTL
 ;
 @               IN      NS      riegel.canyon.f12.com.
-@               IN      A       192.227.4.1 ; IP Lugner
+@               IN      A       192.227.4.1 ; IP Fern
 www             IN      CNAME   riegel.canyon.f12.com.
 ' > /etc/bind/f12/riegel.canyon.f12.com
 
@@ -108,7 +108,7 @@ $TTL    604800
                         604800 )      ; Negative Cache TTL
 ;
 @               IN      NS      granz.channel.f12.com.
-@               IN      A       192.227.3.1 ; IP Fern
+@               IN      A       192.227.3.1 ; IP Lugner
 www             IN      CNAME   granz.channel.f12.com.
 ' > /etc/bind/f12/granz.channel.f12.com
 
