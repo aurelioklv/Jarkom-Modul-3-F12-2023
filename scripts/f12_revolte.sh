@@ -17,11 +17,43 @@ RESET="\e[0m"
 # Install requirements using apt-get
 echo -e "${BG_BLUE}Installing requirements...${RESET}"
 apt-get update
-apt-get install -y lynx
+apt-get install -y lynx apache2-utils
 
 if [ $? -eq 0 ]; then
   echo -e "${BG_GREEN}Requirements installed successfully.${RESET}"
 else
   echo -e "${BG_RED}Error installing requirements.${RESET}"
+  exit 1
+fi
+
+
+# login.json
+echo -e "${BG_BLUE}Creating login.json ...${RESET}"
+echo '
+{
+  "username": "kelompokf12",
+  "password": "passwordf12"
+}' > /root/login.json
+
+if [ $? -eq 0 ]; then
+  echo -e "${BG_GREEN}login.json created successfully.${RESET}"
+else
+  echo -e "${BG_RED}Error creating login.json.${RESET}"
+  exit 1
+fi
+
+
+# login.json
+echo -e "${BG_BLUE}Creating register.json ...${RESET}"
+echo '
+{
+  "username": "kelompokf12",
+  "password": "passwordf12"
+}' > /root/register.json
+
+if [ $? -eq 0 ]; then
+  echo -e "${BG_GREEN}register.json created successfully.${RESET}"
+else
+  echo -e "${BG_RED}Error creating register.json.${RESET}"
   exit 1
 fi

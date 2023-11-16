@@ -43,10 +43,10 @@ fi
 
 
 # Configuring nginx
-# /etc/nginx/sites-available/lb-jarkom
-file_to_modify="/etc/nginx/sites-available/lb-jarkom"
+# /etc/nginx/sites-available/lb-php
+file_to_modify="/etc/nginx/sites-available/lb-php"
 echo -e "${BG_BLUE}Configuring $file_to_modify${RESET}"
-echo 'upstream backend  {
+echo 'upstream backendphp  {
 server 192.227.3.1 weight=1; #IP Lugner
 server 192.227.3.2 weight=2; #IP Linie
 server 192.227.3.3 weight=4; #IP Lawine
@@ -59,7 +59,7 @@ server {
         location / {
                 include /etc/nginx/conf.d/ip-restrictions.conf;
 
-                proxy_pass http://backend;
+                proxy_pass http://backendphp;
                 proxy_set_header    X-Real-IP $remote_addr;
                 proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
                 proxy_set_header    Host $http_host;
@@ -76,8 +76,42 @@ server {
                 proxy_pass https://www.its.ac.id;
         }
 
-        error_log /var/log/nginx/lb_error.log;
-        access_log /var/log/nginx/lb_access.log;
+        error_log /var/log/nginx/lb_php_error.log;
+        access_log /var/log/nginx/lb_php_access.log;
+
+}' > "$file_to_modify"
+
+if [ $? -eq 0 ]; then
+  echo -e "${BG_GREEN}$file_to_modify configured successfully.${RESET}"
+else
+  echo -e "${BG_RED}Error configuring $file_to_modify.${RESET}"
+fi
+
+
+# Configuring nginx
+# /etc/nginx/sites-available/lb-laravel
+file_to_modify="/etc/nginx/sites-available/lb-laravel"
+echo -e "${BG_BLUE}Configuring $file_to_modify${RESET}"
+echo 'upstream backendlaravel  {
+server 192.227.4.1:8001; #IP Fern
+server 192.227.4.2:8002; #IP Flamme
+server 192.227.4.3:8003; #IP Frieren
+}
+
+server {
+        listen 80;
+        server_name riegel.canyon.f12.com;
+
+        location / {
+                proxy_pass http://backendlaravel;
+        }
+
+        location ~ /\.ht {
+                deny all;
+        }
+
+        error_log /var/log/nginx/lb_laravel_error.log;
+        access_log /var/log/nginx/lb_laravel_access.log;
 
 }' > "$file_to_modify"
 
@@ -91,7 +125,8 @@ fi
 # Unlink default config
 echo -e "${BG_BLUE}Unlink defualt Nginx config ...${RESET}"
 unlink /etc/nginx/sites-enabled/default
-ln -s /etc/nginx/sites-available/lb-jarkom /etc/nginx/sites-enabled/
+ln -s /etc/nginx/sites-available/lb-php /etc/nginx/sites-enabled/
+ln -s /etc/nginx/sites-available/lb-laravel /etc/nginx/sites-enabled/
 echo -e "${BG_GREEN}Unlink successful${RESET}"
 
 
