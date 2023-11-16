@@ -42,6 +42,7 @@ fi
 
 
 # Downloading file
+cd /root
 echo -e "${BG_BLUE}Download and unziping...${RESET}"
 wget -O 'granz.channel.yyy.com.zip' 'https://drive.usercontent.google.com/download?id=1ViSkRq7SmwZgdK64eRbr5Fm1EGCTPrU1'
 unzip granz.channel.yyy.com.zip
