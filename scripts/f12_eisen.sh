@@ -121,6 +121,7 @@ echo -e "${BG_GREEN}Success. Please use -g ~/benchmark/<filename> for apache ben
 echo -e "${BG_BLUE}Making rahasiakita and .htpasswd ...${RESET}"
 mkdir -p /etc/nginx/rahasiakita
 touch /etc/nginx/rahasiakita/.htpasswd
+htpasswd -b /etc/nginx/rahasiakita/.htpasswd netics ajkf12
 echo -e "${BG_GREEN}rahasiakita and .htpasswd created.${RESET}"
 
 
