@@ -47,9 +47,9 @@ fi
 file_to_modify="/etc/nginx/sites-available/lb-jarkom"
 echo -e "${BG_BLUE}Configuring $file_to_modify${RESET}"
 echo 'upstream backend  {
-server 192.227.3.1; #IP Lugner
-server 192.227.3.2; #IP Linie
-server 192.227.3.3; #IP Lawine
+server 192.227.3.1 weight=1; #IP Lugner
+server 192.227.3.2 weight=2; #IP Linie
+server 192.227.3.3 weight=4; #IP Lawine
 }
 
 server {
