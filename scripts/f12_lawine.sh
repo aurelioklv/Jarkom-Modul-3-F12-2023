@@ -31,7 +31,7 @@ fi
 # Install requirements using apt-get
 echo -e "${BG_BLUE}Installing requirements...${RESET}"
 apt-get update
-apt-get install -y wget unzip nginx php php-fpm
+apt-get install -y wget unzip nginx php php-fpm htop
 
 if [ $? -eq 0 ]; then
   echo -e "${BG_GREEN}Requirements installed successfully.${RESET}"
