@@ -280,7 +280,7 @@ zone "granz.channel.f12.com" {
 };
 ```
 
-3. Buat file ```/etc/bind/f12/riegel.canyon.f12.com``` dan ```/etc/bind/f12/granz.channel.f12.com"```.
+3. Buat file ```/etc/bind/f12/riegel.canyon.f12.com``` dan ```/etc/bind/f12/granz.channel.f12.com```.
 
 4. Masukkan konfigurasi berikut pada file yang bersesuaian
 ```
@@ -439,4 +439,309 @@ subnet 192.227.4.0 netmask 255.255.255.0 {
     default-lease-time 720;
     max-lease-time 5760;
 }
+```
+
+## Soal 6
+> Pada masing-masing worker PHP, lakukan konfigurasi virtual host untuk website berikut dengan menggunakan php 7.3.
+
+1. Install beberapa tools
+```
+apt-get update
+apt-get install -y wget unzip nginx php php-fpm htop
+```
+
+2. Download file dan unzip
+```
+wget -O 'granz.channel.yyy.com.zip' 'https://drive.usercontent.google.com/download?id=1ViSkRq7SmwZgdK64eRbr5Fm1EGCTPrU1'
+unzip granz.channel.yyy.com.zip
+mv modul-3/* /var/www/html
+```
+
+3. Masukkan konfigurasi berikut pada ```/etc/nginx/sites-available/default```
+```
+server {
+
+listen 80;
+
+root /var/www/html;
+
+index index.php index.html index.htm;
+server_name _;
+
+location / {
+        try_files $uri $uri/ /index.php?$query_string;
+}
+
+# pass PHP scripts to FastCGI server
+location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php7.3-fpm.sock;
+}
+
+location ~ /\.ht {
+        deny all;
+}
+
+error_log /var/log/nginx/jarkom_error.log;
+access_log /var/log/nginx/jarkom_access.log;
+}
+```
+
+4. Restart service
+```
+service php7.3-fpm start
+service nginx restart
+```
+
+5. Akses website dari client atau worker
+```
+lynx localhost
+lynx granz.channel.f12.com
+```
+
+## Soal 7
+> Kepala suku dari Bredt Region memberikan resource server sebagai berikut:
+> - Lawine, 4GB, 2vCPU, dan 80 GB SSD.
+> - Linie, 2GB, 2vCPU, dan 50 GB SSD.
+> - Lugner 1GB, 1vCPU, dan 25 GB SSD.
+> aturlah agar Eisen dapat bekerja dengan maksimal, lalu lakukan testing dengan 1000 request dan 100 request/second.
+
+1. Ubah konfiguarsi ```/etc/bind/f12/granz.channel.f12.com``` pada **Heiter** untuk menuju ke IP Eisen kemudian restart bind9
+```
+;
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     granz.channel.f12.com. root.granz.channel.f12.com. (
+			    2023110101    ; Serial
+                        604800        ; Refresh
+                        86400         ; Retry
+                        2419200       ; Expire
+                        604800 )      ; Negative Cache TTL
+;
+@               IN      NS      granz.channel.f12.com.
+@               IN      A       192.227.2.2 ; IP Eisen
+www             IN      CNAME   granz.channel.f12.com.
+
+```
+
+2. Pada **Eisen**, masukkan konfigurasi berikut pada ```/etc/nginx/sites-available/lb-php```
+```
+upstream backendphp  {
+server 192.227.3.1 weight=1; #IP Lugner
+server 192.227.3.2 weight=2; #IP Linie
+server 192.227.3.3 weight=4; #IP Lawine
+}
+
+server {
+        listen 80;
+        server_name granz.channel.f12.com;
+
+        location / {
+                include /etc/nginx/conf.d/ip-restrictions.conf;
+
+                proxy_pass http://backendphp;
+                proxy_set_header    X-Real-IP $remote_addr;
+                proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header    Host $http_host;
+
+                auth_basic "Administrator'\''s Area";
+                auth_basic_user_file /etc/nginx/rahasiakita/.htpasswd;
+        }
+
+        location ~ /\.ht {
+                deny all;
+        }
+
+        location ~ /its {
+                proxy_pass https://www.its.ac.id;
+        }
+
+        error_log /var/log/nginx/lb_php_error.log;
+        access_log /var/log/nginx/lb_php_access.log;
+
+}
+```
+
+3. Restart nginx Eisen
+
+4. Lakukan benchmark dari Client
+```
+ab -n 1000 -c 100 http://granz.channel.f12.com/
+```
+
+## Soal 8
+> Buatlah analisis hasil testing dengan 200 request dan 10 request/second masing-masing algoritma Load Balancer
+
+1. Ubah block ```upstream backendphp``` pada ```/etc/nginx/sites-available/lb-php``` **Eisen** untuk menggunakan algoritma tertentu. Pastikan untuk restart nginx sebelum melakukan benchmark
+```
+# Weighted Round Robin
+upstream backendphp  {
+server 192.227.3.1 weight=1; #IP Lugner
+server 192.227.3.2 weight=2; #IP Linie
+server 192.227.3.3 weight=4; #IP Lawine
+}
+```
+```
+# Round Robin
+upstream backendphp  {
+server 192.227.3.1; #IP Lugner
+server 192.227.3.2; #IP Linie
+server 192.227.3.3; #IP Lawine
+}
+```
+```
+# Least Connection
+upstream backendphp  {
+least_conn;
+server 192.227.3.1; #IP Lugner
+server 192.227.3.2; #IP Linie
+server 192.227.3.3; #IP Lawine
+}
+```
+```
+# IP Hash
+upstream backendphp  {
+ip_hash;
+server 192.227.3.1; #IP Lugner
+server 192.227.3.2; #IP Linie
+server 192.227.3.3; #IP Lawine
+}
+```
+```
+# Generic Hash
+upstream backendphp  {
+hash $request_uri consistent;
+server 192.227.3.1; #IP Lugner
+server 192.227.3.2; #IP Linie
+server 192.227.3.3; #IP Lawine
+}
+```
+
+2. Lakukan benchmark dari Client
+```
+ab -n 200 -c 10 http://granz.channel.f12.com/
+```
+
+## Soal 9
+> Dengan menggunakan algoritma Round Robin, lakukan testing dengan menggunakan 3 worker, 2 worker, dan 1 worker sebanyak 100 request dengan 10 request/second, kemudian tambahkan grafiknya pada grimoire
+
+1. Comment beberapa server pada blok ```upstream backendphp``` untuk mengatur banyaknya worker yang bekerja kemudian restart nginx
+```
+# Round Robin
+upstream backendphp  {
+server 192.227.3.1; #IP Lugner
+# server 192.227.3.2; #IP Linie
+# server 192.227.3.3; #IP Lawine
+}
+```
+
+2. Lakukan benchmark dari Client
+```
+ab -n 100 -c 10 http://granz.channel.f12.com/
+```
+
+## Soal 10
+> Selanjutnya coba tambahkan konfigurasi autentikasi di LB dengan dengan kombinasi username: “netics” dan password: “ajkyyy”, dengan yyy merupakan kode kelompok. Terakhir simpan file “htpasswd” nya di /etc/nginx/rahasisakita/
+
+1. Tambahkan konfigurasi berikut pada blok ```location /``` pada ```/etc/nginx/sites-available/lb-php``` kemudian restart nginx
+```
+auth_basic "Administrator's Area";
+auth_basic_user_file /etc/nginx/rahasiakita/.htpasswd;
+```
+
+2. Buat direktori ```rahasiakita``` dan file ```.htpasswd``` di dalamnya
+
+3. Daftarkan sebuah username dan password pada file tersebut
+```
+htpasswd -b /etc/nginx/rahasiakita/.htpasswd netics ajkf12
+```
+
+4. Akses website dari Client menggunakan Lynx. Client akan diminta untuk memasukkan username dan password untuk mengaksesnya.
+
+## Soal 11
+> Lalu buat untuk setiap request yang mengandung /its akan di proxy passing menuju halaman https://www.its.ac.id
+
+1. Buat sebuah block ```location ~ /its``` pada ```/etc/nginx/sites-available/lb-php``` **Eisen** kemudian restart nginx
+```
+location ~ /its {
+        proxy_pass https://www.its.ac.id;
+}
+```
+
+2. Akses website dari Client
+```
+lynx granz.channel.f12.com
+```
+
+## Soal 12
+> Selanjutnya LB ini hanya boleh diakses oleh client dengan IP [Prefix IP].3.69, [Prefix IP].3.70, [Prefix IP].4.167, dan [Prefix IP].4.168.
+
+1. Buat sebuah file untuk menyimpan restriksi IP. Dalam hal ini ```/etc/nginx/conf.d/ip-restrictions.conf``` yang berisi sebagai berikut
+```
+allow 192.227.3.69;
+allow 192.227.3.70;
+allow 192.227.4.167;
+allow 192.227.4.168;
+deny all;
+```
+
+2. Include file tersebut pada block ```location /``` pada ```/etc/nginx/sites-available/lb-php``` **Eisen** kemudian restart nginx
+```
+location / {
+        include /etc/nginx/conf.d/ip-restrictions.conf;
+
+        proxy_pass http://backendphp;
+        proxy_set_header    X-Real-IP $remote_addr;
+        proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header    Host $http_host;
+
+        auth_basic "Administrator's Area";
+        auth_basic_user_file /etc/nginx/rahasiakita/.htpasswd;
+}
+```
+
+3. Akses website dari Client. Client dengan IP yang tidak memenuhi persyaratan tidak dapat mengakses website ```granz.channel.f12.com```
+
+## Soal 13
+> Semua data yang diperlukan, diatur pada Denken dan harus dapat diakses oleh Frieren, Flamme, dan Fern. 
+
+1. Install mariadb-server pada Denken
+```
+apt-get update
+apt-get install -y mariadb-server
+```
+
+2. Masukkan konfigurasi berikut pada ```/etc/mysql/my.cnf```
+```
+[client-server]
+
+!includedir /etc/mysql/conf.d/
+!includedir /etc/mysql/mariadb.conf.d/
+
+[mysqld]
+skip-networking=0
+skip-bind-address
+```
+
+3. Restart mysql
+
+4. Jalankan command mysql lalu buat beberapa user dan database
+```
+mysql -u root -p
+```
+```
+CREATE USER 'kelompokf12'@'%' IDENTIFIED BY 'qwe123';
+CREATE USER 'kelompokf12'@'localhost' IDENTIFIED BY 'qwe123';
+CREATE DATABASE kelompokf12;
+GRANT ALL PRIVILEGES ON *.* TO 'kelompokf12'@'%';
+GRANT ALL PRIVILEGES ON *.* TO 'kelompokf12'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+5. Pada worker Laravel, install mariadb-client
+
+6. Akses server database Denken dari worker Laravel
+```
+mysql -u kelompokf12 -h 192.227.2.1 -p -D kelompokf12
 ```
