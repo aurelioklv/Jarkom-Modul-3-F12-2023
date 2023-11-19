@@ -1045,10 +1045,132 @@ ln -s /etc/nginx/sites-available/lb-laravel /etc/nginx/sites-enabled/
 
 ## Soal 19
 > Untuk meningkatkan performa dari Worker, coba implementasikan PHP-FPM pada Frieren, Flamme, dan Fern. Untuk testing kinerja naikkan 
-- pm.max_children
-- pm.start_servers
-- pm.min_spare_servers
-- pm.max_spare_servers
-sebanyak tiga percobaan dan lakukan testing sebanyak 100 request dengan 10 request/second kemudian berikan hasil analisisnya pada Grimoire
+> - pm.max_children
+> - pm.start_servers
+> - pm.min_spare_servers
+> - pm.max_spare_servers
+> sebanyak tiga percobaan dan lakukan testing sebanyak 100 request dengan 10 request/second kemudian berikan hasil analisisnya pada Grimoire
+Kita buat 3 file untuk masing masing specifkasi dengan nilai nilai yang naik secara lurus
+```
+echo '[www]
+user = www-data
+group = www-data
+listen = /run/php/php8.0-fpm.sock
+listen.owner = www-data
+listen.group = www-data
+php_admin_value[disable_functions] = exec,passthru,shell_exec,system
+php_admin_flag[allow_url_fopen] = off
+
+
+; Choose how the process manager will control the number of child processes.
+
+
+pm = dynamic
+pm.max_children = 4
+pm.start_servers = 1
+pm.min_spare_servers = 1
+pm.max_spare_servers = 4' > /etc/php/8.0/fpm/pool.d/www.conf
+
+
+service php8.0-fpm restart
+
+
+
+
+# Script 2
+echo '[www]
+user = www-data
+group = www-data
+listen = /run/php/php8.0-fpm.sock
+listen.owner = www-data
+listen.group = www-data
+php_admin_value[disable_functions] = exec,passthru,shell_exec,system
+php_admin_flag[allow_url_fopen] = off
+
+
+; Choose how the process manager will control the number of child processes.
+
+
+pm = dynamic
+pm.max_children = 15
+pm.start_servers = 5
+pm.min_spare_servers = 4
+pm.max_spare_servers = 8' > /etc/php/8.0/fpm/pool.d/www.conf
+
+
+service php8.0-fpm restart
+
+
+
+
+# Script 2
+echo '[www]
+user = www-data
+group = www-data
+listen = /run/php/php8.0-fpm.sock
+listen.owner = www-data
+listen.group = www-data
+php_admin_value[disable_functions] = exec,passthru,shell_exec,system
+php_admin_flag[allow_url_fopen] = off
+
+
+; Choose how the process manager will control the number of child processes.
+
+
+pm = dynamic
+pm.max_children = 50
+pm.start_servers = 15
+pm.min_spare_servers = 10
+pm.max_spare_servers = 20' > /etc/php/8.0/fpm/pool.d/www.conf
+
+
+service php8.0-fpm restart
+
+```
+Berikut adalah hasil
+### Test 1
+<p align="center">
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/114126015/ee292bfd-398e-42cf-99d1-fe68444c719d" alt='test1' />
+</p>
+### Test 2
+<p align="center">
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/114126015/51259435-bd95-4187-b625-a69684c6db09" alt='test2' />
+</p>
+### Test 3
+<p align="center">
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/114126015/e396cffd-d4d3-4fa2-9614-21a1c3d10f25" alt='test3' />
+</p>
+Bisa dilihat semakin banyak semaik bagus, namun jika terlalu banyak justru melambat
 
 ## Soal 20
+> Nampaknya hanya menggunakan PHP-FPM tidak cukup untuk meningkatkan performa dari worker maka implementasikan Least-Conn pada Eisen. Untuk testing kinerja dari worker tersebut dilakukan sebanyak 100 request dengan 10 request/second.
+1. Edit load balancer sehingga mempunyai least connect
+```
+echo 'upstream backendlaravel  {
+least_conn;
+server 192.227.4.1:8001; #IP Fern
+server 192.227.4.2:8002; #IP Flamme
+server 192.227.4.3:8003; #IP Frieren
+}
+
+server {
+        listen 80;
+        server_name riegel.canyon.f12.com;
+
+        location / {
+                proxy_pass http://backendlaravel;
+        }
+
+        location ~ /\.ht {
+                deny all;
+        }
+
+        error_log /var/log/nginx/lb_laravel_error.log;
+        access_log /var/log/nginx/lb_laravel_access.log;
+
+}'
+```
+2. Run benchmark
+<p align="center">
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/114126015/1ef83d9e-d10d-4224-a79d-1900bc0a2d7f" alt='least_conn laravel' />
+</p>
