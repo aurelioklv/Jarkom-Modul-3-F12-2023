@@ -855,3 +855,200 @@ mysql -u kelompokf12 -h 192.227.2.1 -p -D kelompokf12
 <p align="center">
     <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/87407047/5601da2c-b353-4409-a747-a357ad1f1078" alt='Database Client' />
 </p>
+
+## Soal 14 
+> Frieren, Flamme, dan Fern memiliki Riegel Channel sesuai dengan quest guide berikut. Jangan lupa melakukan instalasi PHP8.0 dan Composer 
+Quest guide merupakan sebuah git repo yang berisi project laravel yang perlu dicopy ke tiap worker. 
+1. Sebelum itu kita perly install semua yang diperlukan, yaitu php8, compose dan beberapa app lain speerti wget.
+```
+apt-get install -y lsb-release ca-certificates apt-transport-https software-properties-common gnupg2
+curl -sSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.org/php/apt.gpg
+sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+apt-get update
+apt-get install php8.0-mbstring php8.0-xml php8.0-cli php8.0-common php8.0-intl php8.0-opcache php8.0-readline php8.0-mysql php8.0-fpm php8.0-curl unzip wget -y
+apt-get install -y git mariadb-client nginx
+wget https://getcomposer.org/download/2.0.13/composer.phar
+chmod +x composer.phar
+mv composer.phar /usr/bin/composer
+
+```
+2. Setelah itu kita perlu setup project berdeasarkan repo.
+```
+   cd /var/www
+git clone https://github.com/martuafernando/laravel-praktikum-jarkom
+cd laravel-praktikum-jarkom
+composer update
+composer install
+```
+3. Agar dapat konek dengan database, kita perlu modifikasi file env.
+```
+file_to_modify="/var/www/laravel-praktikum-jarkom/.env"
+echo -e "${BG_BLUE}Configuring $file_to_modify${RESET}"
+echo 'APP_NAME=Laravel
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost
+
+LOG_CHANNEL=stack
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
+
+DB_CONNECTION=mysql
+DB_HOST=192.227.2.1
+DB_PORT=3306
+DB_DATABASE=kelompokf12
+DB_USERNAME=kelompokf12
+DB_PASSWORD=qwe123
+
+BROADCAST_DRIVER=log
+CACHE_DRIVER=file
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+
+MEMCACHED_HOST=127.0.0.1
+
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+AWS_USE_PATH_STYLE_ENDPOINT=false
+
+PUSHER_APP_ID=
+PUSHER_APP_KEY=
+PUSHER_APP_SECRET=
+PUSHER_HOST=
+PUSHER_PORT=443
+PUSHER_SCHEME=https
+PUSHER_APP_CLUSTER=mt1
+
+VITE_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
+VITE_PUSHER_HOST="${PUSHER_HOST}"
+VITE_PUSHER_PORT="${PUSHER_PORT}"
+VITE_PUSHER_SCHEME="${PUSHER_SCHEME}"
+VITE_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"' > "$file_to_modify"
+```
+4. Setup sehingga file bisa dirun
+```
+chown -R www-data.www-data /var/www/laravel-praktikum-jarkom/storage
+php artisan migrate
+php artisan db:seed --class=AiringsTableSeeder
+php artisan key:generate
+php artisan jwt:secret
+php artisan cache:clear
+```
+## Soal 15
+> Riegel Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 request dengan 10 request/second. Tambahkan response dan hasil testing pada grimoire. POST /auth/register
+1. buat register.json di client sehingga bisa lakukan post.
+```
+echo '
+{
+  "username": "kelompokf12",
+  "password": "passwordf12"
+}' > /root/register.json
+```
+2. Run apache benchmark dengan register.json
+```
+ab -n 100 -c 10 -p register.json -T application/json http://192.221.4.1:8001/api/auth/register
+```
+
+<p align="center">
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/114126015/9cc71a47-3356-4493-b0c9-43c203113ef7" alt='register.json' />
+</p>
+## Soal 16
+> Riegel Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 request dengan 10 request/second. Tambahkan response dan hasil testing pada grimoire. POST /auth/login
+1. buat login.json di client sehingga bisa lakukan post. 
+
+```
+echo '
+{
+  "username": "kelompokf12",
+  "password": "passwordf12"
+}' > /root/login.json
+
+```
+
+2. Run apache benchmark dengan login.json
+```
+ab -n 100 -c 10 -p login.json -T application/json http://192.221.4.1:8001/api/auth/register
+```
+<p align="center">
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/114126015/ebc93101-42b1-40ec-85fe-376a6a1cd7ac" alt='login.json' />
+</p>
+## Soal 17
+> Riegel Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 request dengan 10 request/second. Tambahkan response dan hasil testing pada grimoire. GET /me
+1. Buat token untuk endpoint
+
+``` 
+curl -X POST -H "Content-Type: application/json" -d @login.json http://192.173.4.1:8001/api/auth/login > login_output.txt
+```
+2. Set token sebagau variabel di client
+```
+token=$(cat login_output.txt | jq -r '.token')
+```
+3. Run benchmark
+```
+ab -n 100 -c 10 -H "Authorization: Bearer $token" http://192.221.4.1:8001/api/me
+```
+<p align="center">
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/114126015/2c2b7f75-de38-41b8-af86-5d073524bfb8" alt='get me' />
+</p>
+## Soal 18
+> Untuk memastikan ketiganya bekerja sama secara adil untuk mengatur Riegel Channel maka implementasikan Proxy Bind pada Eisen untuk mengaitkan IP dari Frieren, Flamme, dan Fern
+1. Buat setting load balancer untuk laravel di eisen
+
+```
+echo 'upstream backendlaravel  {
+server 192.227.4.1:8001; #IP Fern
+server 192.227.4.2:8002; #IP Flamme
+server 192.227.4.3:8003; #IP Frieren
+}
+
+server {
+        listen 80;
+        server_name riegel.canyon.f12.com;
+
+        location / {
+                proxy_pass http://backendlaravel;
+        }
+
+        location ~ /\.ht {
+                deny all;
+        }
+
+        error_log /var/log/nginx/lb_laravel_error.log;
+        access_log /var/log/nginx/lb_laravel_access.log;
+
+}'
+```
+2. Link dengan sites-enabled
+```
+unlink /etc/nginx/sites-enabled/default
+ln -s /etc/nginx/sites-available/lb-php /etc/nginx/sites-enabled/
+ln -s /etc/nginx/sites-available/lb-laravel /etc/nginx/sites-enabled/
+```
+
+## Soal 19
+> Untuk meningkatkan performa dari Worker, coba implementasikan PHP-FPM pada Frieren, Flamme, dan Fern. Untuk testing kinerja naikkan 
+- pm.max_children
+- pm.start_servers
+- pm.min_spare_servers
+- pm.max_spare_servers
+sebanyak tiga percobaan dan lakukan testing sebanyak 100 request dengan 10 request/second kemudian berikan hasil analisisnya pada Grimoire
+
+## Soal 20
