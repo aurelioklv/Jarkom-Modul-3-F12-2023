@@ -604,7 +604,7 @@ ab -n 1000 -c 100 http://granz.channel.f12.com/
 ```
 
 <p align="center">
-  <img src="https://repository-images.githubusercontent.com/211751560/9f445f80-e35e-11e9-9977-bd2a8c863c24" alt='Weighted Round Robin' />
+  <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/114126015/15eb7853-373f-447e-8a3c-8bf613df95bd" alt='Weighted Round Robin' />
 </p>
 
 ## Soal 8
@@ -661,29 +661,32 @@ ab -n 200 -c 10 http://granz.channel.f12.com/
 ```
 - Weighted Round Robin
     <p align="center">
-    <img src="https://repository-images.githubusercontent.com/211751560/9f445f80-e35e-11e9-9977-bd2a8c863c24" alt='Weighted Round Robin' />
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/114126015/94686609-157f-4312-8761-95070858dcc4" alt='Weighted Round Robin' />
     </p>
     
 - Round Robin
     <p align="center">
-    <img src="https://repository-images.githubusercontent.com/211751560/9f445f80-e35e-11e9-9977-bd2a8c863c24" alt='Round Robin' />
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/114126015/7010ffbd-a88c-4c14-8f48-44fac254c827" alt='Round Robin' />
     </p>
 
 - Least Connection
     <p align="center">
-    <img src="https://repository-images.githubusercontent.com/211751560/9f445f80-e35e-11e9-9977-bd2a8c863c24" alt='Least Connection' />
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/114126015/12806ce4-c419-400a-a4ac-5e42d1556390" alt='Least Connection' />
     </p>
 
 - IP Hash
     <p align="center">
-    <img src="https://repository-images.githubusercontent.com/211751560/9f445f80-e35e-11e9-9977-bd2a8c863c24" alt='IP Hash' />
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/114126015/101427d1-9ed2-4a4d-a8f0-ef9373273fb1" alt='IP Hash' />
     </p>
 
 - Generic Hash
     <p align="center">
-    <img src="https://repository-images.githubusercontent.com/211751560/9f445f80-e35e-11e9-9977-bd2a8c863c24" alt='Generic Hash' />
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/114126015/8d6427ee-3e80-4ff0-a10e-d68ef6b4375e" alt='Generic Hash' />
     </p>
-
+- Graph
+   <p align="center">
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/114126015/f52c22e7-ee90-4d7a-948f-0881f2cce3ca" alt='Graph 1' />
+    </p>
 ## Soal 9
 > Dengan menggunakan algoritma Round Robin, lakukan testing dengan menggunakan 3 worker, 2 worker, dan 1 worker sebanyak 100 request dengan 10 request/second, kemudian tambahkan grafiknya pada grimoire
 
@@ -704,19 +707,22 @@ ab -n 100 -c 10 http://granz.channel.f12.com/
 
 - 1 Worker
     <p align="center">
-    <img src="https://repository-images.githubusercontent.com/211751560/9f445f80-e35e-11e9-9977-bd2a8c863c24" alt='Round Robin 1 Worker' />
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/114126015/b86f3a02-dc23-42c9-b57e-b45193fa8296" alt='Round Robin 1 Worker' />
     </p>
 
 - 2 Worker
     <p align="center">
-    <img src="https://repository-images.githubusercontent.com/211751560/9f445f80-e35e-11e9-9977-bd2a8c863c24" alt='Round Robin 2 Worker' />
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/114126015/8df07ebd-a266-4541-9645-95000d2e98ec' />
     </p>
 
 - 3 Worker
     <p align="center">
-    <img src="https://repository-images.githubusercontent.com/211751560/9f445f80-e35e-11e9-9977-bd2a8c863c24" alt='Round Robin 3 Worker' />
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/114126015/0de2c01a-cd7d-4557-90c4-f14c645cdf37" alt='Round Robin 3 Worker' />
     </p>
-
+- Graph
+ <p align="center">
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/114126015/90b71b0c-5bc5-4d9b-8b90-e676cecfe56f" alt='Graph 2' />
+    </p>
 
 ## Soal 10
 > Selanjutnya coba tambahkan konfigurasi autentikasi di LB dengan dengan kombinasi username: “netics” dan password: “ajkyyy”, dengan yyy merupakan kode kelompok. Terakhir simpan file “htpasswd” nya di /etc/nginx/rahasisakita/
