@@ -35,6 +35,10 @@
 
 ## Topologi
 
+<p align="center">
+  <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/87407047/d83e6846-ee1d-4b93-8e22-f44790901967" alt='Topologi' />
+</p>
+
 ## Konfigurasi
 
 <details>
@@ -327,6 +331,11 @@ ping riegel.canyon.f12.com
 ping granz.channel.f12.com
 ```
 
+<p align="center">
+  <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/87407047/61581cf2-ae64-40e6-a8fb-42c70ff76fdc" alt='Soal 0' />
+</p>
+
+
 ## Soal 1
 > Lakukan konfigurasi sesuai dengan peta yang sudah diberikan.
 
@@ -410,7 +419,27 @@ subnet 192.227.4.0 netmask 255.255.255.0 {
 ## Soal 4
 > Client mendapatkan DNS dari Heiter dan dapat terhubung dengan internet melalui DNS tersebut
 
-1. Client berhasil mendapatkan nameserver 192.227.1.2 secara otomatis dari DHCP Server (Heiter)
+1. Masukkan konfigurasi DNS Forwarding berikut pada **Heiter**
+```
+options {
+      directory "/var/cache/bind";
+
+      forwarders {
+              192.168.122.1;
+      };
+
+      // dnssec-validation auto;
+      allow-query{any;};
+      auth-nxdomain no;    # conform to RFC1035
+      listen-on-v6 { any; };
+}; 
+```
+
+2. Client berhasil mendapatkan nameserver 192.227.1.2 secara otomatis dari DHCP Server (Heiter) dan dapat terhubung ke internet
+
+<p align="center">
+  <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/87407047/712f349c-db90-45f3-83a4-f88383cee962" alt='Soal 4' />
+</p>
 
 ## Soal 5
 > Lama waktu DHCP server meminjamkan alamat IP kepada Client yang melalui Switch3 selama 3 menit sedangkan pada client yang melalui Switch4 selama 12 menit. Dengan waktu maksimal dialokasikan untuk peminjaman alamat IP selama 96 menit
@@ -499,6 +528,10 @@ lynx localhost
 lynx granz.channel.f12.com
 ```
 
+<p align="center">
+  <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/87407047/b3ffb2cc-fdd6-45cf-b353-8b734c19cb4f" alt='Soal 6' />
+</p>
+
 ## Soal 7
 > Kepala suku dari Bredt Region memberikan resource server sebagai berikut:
 > - Lawine, 4GB, 2vCPU, dan 80 GB SSD.
@@ -529,8 +562,8 @@ www             IN      CNAME   granz.channel.f12.com.
 ```
 upstream backendphp  {
 server 192.227.3.1 weight=1; #IP Lugner
-server 192.227.3.2 weight=2; #IP Linie
-server 192.227.3.3 weight=4; #IP Lawine
+server 192.227.3.2 weight=4; #IP Linie
+server 192.227.3.3 weight=8; #IP Lawine
 }
 
 server {
@@ -569,6 +602,10 @@ server {
 ```
 ab -n 1000 -c 100 http://granz.channel.f12.com/
 ```
+
+<p align="center">
+  <img src="https://repository-images.githubusercontent.com/211751560/9f445f80-e35e-11e9-9977-bd2a8c863c24" alt='Weighted Round Robin' />
+</p>
 
 ## Soal 8
 > Buatlah analisis hasil testing dengan 200 request dan 10 request/second masing-masing algoritma Load Balancer
@@ -622,6 +659,30 @@ server 192.227.3.3; #IP Lawine
 ```
 ab -n 200 -c 10 http://granz.channel.f12.com/
 ```
+- Weighted Round Robin
+    <p align="center">
+    <img src="https://repository-images.githubusercontent.com/211751560/9f445f80-e35e-11e9-9977-bd2a8c863c24" alt='Weighted Round Robin' />
+    </p>
+    
+- Round Robin
+    <p align="center">
+    <img src="https://repository-images.githubusercontent.com/211751560/9f445f80-e35e-11e9-9977-bd2a8c863c24" alt='Round Robin' />
+    </p>
+
+- Least Connection
+    <p align="center">
+    <img src="https://repository-images.githubusercontent.com/211751560/9f445f80-e35e-11e9-9977-bd2a8c863c24" alt='Least Connection' />
+    </p>
+
+- IP Hash
+    <p align="center">
+    <img src="https://repository-images.githubusercontent.com/211751560/9f445f80-e35e-11e9-9977-bd2a8c863c24" alt='IP Hash' />
+    </p>
+
+- Generic Hash
+    <p align="center">
+    <img src="https://repository-images.githubusercontent.com/211751560/9f445f80-e35e-11e9-9977-bd2a8c863c24" alt='Generic Hash' />
+    </p>
 
 ## Soal 9
 > Dengan menggunakan algoritma Round Robin, lakukan testing dengan menggunakan 3 worker, 2 worker, dan 1 worker sebanyak 100 request dengan 10 request/second, kemudian tambahkan grafiknya pada grimoire
@@ -641,6 +702,22 @@ server 192.227.3.1; #IP Lugner
 ab -n 100 -c 10 http://granz.channel.f12.com/
 ```
 
+- 1 Worker
+    <p align="center">
+    <img src="https://repository-images.githubusercontent.com/211751560/9f445f80-e35e-11e9-9977-bd2a8c863c24" alt='Round Robin 1 Worker' />
+    </p>
+
+- 2 Worker
+    <p align="center">
+    <img src="https://repository-images.githubusercontent.com/211751560/9f445f80-e35e-11e9-9977-bd2a8c863c24" alt='Round Robin 2 Worker' />
+    </p>
+
+- 3 Worker
+    <p align="center">
+    <img src="https://repository-images.githubusercontent.com/211751560/9f445f80-e35e-11e9-9977-bd2a8c863c24" alt='Round Robin 3 Worker' />
+    </p>
+
+
 ## Soal 10
 > Selanjutnya coba tambahkan konfigurasi autentikasi di LB dengan dengan kombinasi username: “netics” dan password: “ajkyyy”, dengan yyy merupakan kode kelompok. Terakhir simpan file “htpasswd” nya di /etc/nginx/rahasisakita/
 
@@ -659,6 +736,23 @@ htpasswd -b /etc/nginx/rahasiakita/.htpasswd netics ajkf12
 
 4. Akses website dari Client menggunakan Lynx. Client akan diminta untuk memasukkan username dan password untuk mengaksesnya.
 
+
+<p align="center">
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/87407047/c680249e-7e33-4bb5-9c3e-d7b8ad0bba6c" alt='Auth' />
+</p>
+
+<p align="center">
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/87407047/91c30f4e-82c1-4d00-ac71-148b6bc81002" alt='Auth' />
+</p>
+
+<p align="center">
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/87407047/bde9e369-4559-4783-92a0-f36104c5f5d2" alt='Auth' />
+</p>
+
+<p align="center">
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/87407047/a4751d7a-5983-4f8c-8e2c-f5261de42c27" alt='Auth' />
+</p>
+
 ## Soal 11
 > Lalu buat untuk setiap request yang mengandung /its akan di proxy passing menuju halaman https://www.its.ac.id
 
@@ -671,8 +765,13 @@ location ~ /its {
 
 2. Akses website dari Client
 ```
-lynx granz.channel.f12.com
+lynx granz.channel.f12.com/its
+lynx granz.channel.f12.com/loremipsum/its
 ```
+
+<p align="center">
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/87407047/1bc7b796-41ec-43e5-a93d-ec19f91e1266" alt='Proxy Pass' />
+</p>
 
 ## Soal 12
 > Selanjutnya LB ini hanya boleh diakses oleh client dengan IP [Prefix IP].3.69, [Prefix IP].3.70, [Prefix IP].4.167, dan [Prefix IP].4.168.
@@ -702,6 +801,10 @@ location / {
 ```
 
 3. Akses website dari Client. Client dengan IP yang tidak memenuhi persyaratan tidak dapat mengakses website ```granz.channel.f12.com```
+
+<p align="center">
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/87407047/8b214cdd-f874-49f7-b90c-b7f0d824c580" alt='IP Restriction' />
+</p>
 
 ## Soal 13
 > Semua data yang diperlukan, diatur pada Denken dan harus dapat diakses oleh Frieren, Flamme, dan Fern. 
@@ -745,3 +848,10 @@ FLUSH PRIVILEGES;
 ```
 mysql -u kelompokf12 -h 192.227.2.1 -p -D kelompokf12
 ```
+
+<p align="center">
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/87407047/7fe07a6b-7ee7-44e0-b4f3-2219cbb89b1c" alt='Database Server' />
+</p>
+<p align="center">
+    <img src="https://github.com/aurelioklv/Jarkom-Modul-3-F12-2023/assets/87407047/5601da2c-b353-4409-a747-a357ad1f1078" alt='Database Client' />
+</p>
